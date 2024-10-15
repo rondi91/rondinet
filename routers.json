@@ -1,0 +1,18 @@
+{
+    "routers": {
+        "1": {
+            "id": 1,
+            "name": "GX4",
+            "ip_address": "192.168.9.1",
+            "username": "mikhmon",
+            "password": "1234"
+        },
+        "2": {
+            "id": 2,
+            "name": "rondiyanto",
+            "ip_address": "192.168.255.20",
+            "username": "mikhmon",
+            "password": "1234"
+        }
+    }
+}
