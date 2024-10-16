@@ -49,7 +49,7 @@ if (!empty($profileData)) {
     $profileDetails = $client->query($profileDetailsQuery)->read();
 
     if (!empty($profileDetails)) {
-        $maxSpeed = $profileDetails[0]['rate-limit'];
+        $maxSpeed = $profileDetails[0]['rate-limit']; // Assuming the rate-limit contains the max speed
 
         // If rate-limit is in format "rx/tx", extract the max speed
         $rateLimits = explode("/", $maxSpeed);
@@ -65,7 +65,6 @@ if (!empty($profileData)) {
     echo json_encode(array("error" => "No PPPoE user found."));
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,7 +80,7 @@ if (!empty($profileData)) {
         }
         .page-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
         .gauge-card {
             text-align: center;
@@ -92,90 +91,59 @@ if (!empty($profileData)) {
         canvas {
             margin: 0 auto;
         }
-        #sidebar {
-            min-width: 250px;
-            max-width: 250px;
-            background: #343a40;
-            color: #fff;
-            min-height: 100vh;
-        }
-        #sidebar .components a {
-            padding: 10px;
-            font-size: 1.1em;
-            display: block;
-            color: #ddd;
-            text-decoration: none;
-        }
-        #sidebar .components a:hover {
-            background: #007bff;
-            color: #fff;
-        }
-        .active a {
-            background-color: #007bff;
-            color: #fff;
-        }
     </style>
 </head>
 <body>
-    <div class="d-flex">
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3>Traffic Data</h3>
-                <h4><?php echo htmlspecialchars($username); ?></h4>
-            </div>
-            <ul class="components">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </nav>
-
-        <div class="container-fluid">
-            <div class="page-header">
-                <h1 class="display-6">Traffic Details for <strong><?php echo htmlspecialchars($username); ?></strong></h1>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>User Information</h5>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
-                            <p><strong>Paket:</strong> up to <?php echo htmlspecialchars($profileData); ?></p>
-                            <p><strong>Max Speed:</strong> <?php echo htmlspecialchars($rxLimit . ' Mbps / ' . $txLimit); ?> (Rx / Tx)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <div class="card gauge-card">
-                        <div class="card-header">
-                            <h5>Upload Speed (Tx)</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="uploadGauge" width="250" height="250"></canvas>
-                        </div>
-                        <p id="uploadSpeedValue">0 Mbps</p>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <div class="card gauge-card">
-                        <div class="card-header">
-                            <h5>Download Speed (Rx)</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="downloadGauge" width="250" height="250"></canvas>
-                        </div>
-                        <p id="downloadSpeedValue">0 Mbps</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="trafficDetails"></div>
+    <div class="container mt-4">
+        <div class="page-header">
+            <h1 class="display-6">Traffic Details for <strong><?php echo htmlspecialchars($username); ?></strong></h1>
         </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>User Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
+                        <p><strong>Paket:</strong> up to <?php echo htmlspecialchars($profileData); ?></p>
+                        <p><strong>Max Speed:</strong> <?php echo htmlspecialchars($rxLimit . ' Mbps / ' . $txLimit); ?> (Rx / Tx)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row for Speed Gauges -->
+            <div class="col-md-6 mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card gauge-card">
+                            <div class="card-header">
+                                <h5>Upload Speed (Tx)</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="uploadGauge" width="250" height="250"></canvas>
+                            </div>
+                            <p id="uploadSpeedValue">0 Mbps</p>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card gauge-card">
+                            <div class="card-header">
+                                <h5>Download Speed (Rx)</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="downloadGauge" width="250" height="250"></canvas>
+                            </div>
+                            <p id="downloadSpeedValue">0 Mbps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="trafficDetails"></div>
     </div>
 
     <script>
@@ -240,7 +208,6 @@ if (!empty($profileData)) {
                     downloadGaugeChart.update();
                     uploadGaugeChart.data.datasets[0].data = [data.tx, maxTx - data.tx];
                     uploadGaugeChart.update();
-
                     document.getElementById('uploadSpeedValue').innerText = data.tx + ' Mbps';
                     document.getElementById('downloadSpeedValue').innerText = data.rx + ' Mbps';
                 }
