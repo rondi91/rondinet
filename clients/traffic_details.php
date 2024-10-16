@@ -71,8 +71,10 @@ if (!empty($profileData)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Details for <?php echo htmlspecialchars($username); ?></title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -84,12 +86,26 @@ if (!empty($profileData)) {
         }
         .gauge-card {
             text-align: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1; /* Make cards flex to share space equally */
+            margin: 10px; /* Add margin between the cards */
         }
         .gauge-card h5 {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         canvas {
+            display: block;
             margin: 0 auto;
+            max-width: 100% !important;
+            height: 150px !important;
+        }
+        .gauge-value {
+            font-size: 1.5em;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -113,32 +129,16 @@ if (!empty($profileData)) {
                 </div>
             </div>
 
-            <!-- Row for Speed Gauges -->
-            <div class="col-md-6 mb-3">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card gauge-card">
-                            <div class="card-header">
-                                <h5>Upload Speed (Tx)</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="uploadGauge" width="250" height="250"></canvas>
-                            </div>
-                            <p id="uploadSpeedValue">0 Mbps</p>
-                        </div>
-                    </div>
-
-                    <div class="col-6">
-                        <div class="card gauge-card">
-                            <div class="card-header">
-                                <h5>Download Speed (Rx)</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="downloadGauge" width="250" height="250"></canvas>
-                            </div>
-                            <p id="downloadSpeedValue">0 Mbps</p>
-                        </div>
-                    </div>
+            <div class="col-md-8 mb-3 d-flex">
+                <div class="gauge-card">
+                    <h5>Upload Speed (Tx)</h5>
+                    <canvas id="uploadGauge"></canvas>
+                    <p id="uploadSpeedValue" class="gauge-value">0 Mbps</p>
+                </div>
+                <div class="gauge-card">
+                    <h5>Download Speed (Rx)</h5>
+                    <canvas id="downloadGauge"></canvas>
+                    <p id="downloadSpeedValue" class="gauge-value">0 Mbps</p>
                 </div>
             </div>
         </div>
@@ -147,9 +147,10 @@ if (!empty($profileData)) {
     </div>
 
     <script>
-        var maxRx = <?php echo (int)$rxLimit; ?>;
-        var maxTx = <?php echo (int)$txLimit; ?>;
+        var maxRx = <?php echo (int)$rxLimit; ?>; // Max download speed from PHP
+        var maxTx = <?php echo (int)$txLimit; ?>; // Max upload speed from PHP
 
+        // Initialize the download gauge
         var downloadGaugeChart = new Chart(document.getElementById('downloadGauge').getContext('2d'), {
             type: 'doughnut',
             data: {
@@ -165,6 +166,7 @@ if (!empty($profileData)) {
                 rotation: -90,
                 cutoutPercentage: 70,
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: true,
@@ -174,6 +176,7 @@ if (!empty($profileData)) {
             }
         });
 
+        // Initialize the upload gauge
         var uploadGaugeChart = new Chart(document.getElementById('uploadGauge').getContext('2d'), {
             type: 'doughnut',
             data: {
@@ -189,6 +192,7 @@ if (!empty($profileData)) {
                 rotation: -90,
                 cutoutPercentage: 70,
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: true,
@@ -198,8 +202,10 @@ if (!empty($profileData)) {
             }
         });
 
+        // Fetch real-time traffic data
         function fetchTrafficData() {
             var username = "<?php echo htmlspecialchars($username); ?>";
+
             fetch('get_traffic_details.php?username=' + username)
             .then(response => response.json())
             .then(data => {
@@ -215,7 +221,8 @@ if (!empty($profileData)) {
             .catch(error => console.error('Error fetching traffic data:', error));
         }
 
-        setInterval(fetchTrafficData, 1000);
+        // Fetch traffic data every 2 seconds
+        setInterval(fetchTrafficData, 2000);
     </script>
 </body>
 </html>
