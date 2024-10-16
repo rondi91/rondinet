@@ -1,6 +1,6 @@
 <?php
-require 'vendor/autoload.php'; // Load RouterOS API via Composer
-require 'config.php';          // Load the router configuration
+require '../vendor/autoload.php'; // Load RouterOS API via Composer
+require '../config.php';          // Load the router configuration
 
 use RouterOS\Client;
 use RouterOS\Query;
@@ -13,7 +13,8 @@ $client = new Client([
 
 // Check if the username is passed in the request
 if (isset($_POST['username'])) {
-    $username = $_POST['username'];
+     $username = $_POST['username'];
+    // $username = 'rondi4';
 } else {
     echo json_encode(array("error" => "No username provided."));
     exit();
@@ -32,17 +33,22 @@ if (!empty($profileData)) {
         ->where('name', $userProfile);
     $profileDetails = $client->query($profileDetailsQuery)->read();
 
+    
     if (!empty($profileDetails)) {
-        $maxSpeed = $profileDetails[0]['rate-limit']; // Assuming the rate-limit contains the max speed
+        // $maxSpeed = $profileDetails[0]['rate-limit']; // Assuming the rate-limit contains the max speed
+        $maxSpeed = $profileDetails[0]['name']; // Assuming the rate-limit contains the max speed
+        $maxSpeed = intval($maxSpeed);
+        $rxLimit = $maxSpeed ? : 0;
+        $txLimit = $maxSpeed ? : 0;
         
         // If rate-limit is in format "rx/tx", extract the max speed
-        $rateLimits = explode("/", $maxSpeed);
-        $rxLimit = (isset($rateLimits[0])) ? (int)$rateLimits[0] : 0;
-        $txLimit = (isset($rateLimits[1])) ? (int)$rateLimits[1] : 0;
+        // $rateLimits = explode("/", $maxSpeed);
+        // $rxLimit = (isset($rateLimits[5])) ? (int)$rateLimits[0] : 0;
+        // $txLimit = (isset($rateLimits[6])) ? (int)$rateLimits[1] : 0;
         
         // Assuming you want the higher of the two values
         $maxSpeed = max($rxLimit, $txLimit);
-
+        
         echo json_encode(array("maxSpeed" => $maxSpeed));
     } else {
         echo json_encode(array("error" => "No profile details found."));
