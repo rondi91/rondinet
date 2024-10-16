@@ -49,15 +49,20 @@ if (!empty($profileData)) {
     $profileDetails = $client->query($profileDetailsQuery)->read();
 
     if (!empty($profileDetails)) {
-        $maxSpeed = $profileDetails[0]['rate-limit']; // Assuming the rate-limit contains the max speed
-
+        $maxSpeed = $profileDetails[0]['name']; // Assuming the rate-limit contains the max speed
+        $maxSpeed = intval($maxSpeed);
+        $rxLimit = $maxSpeed ? : 0;
+        $txLimit = $maxSpeed ? : 0;
+        
         // If rate-limit is in format "rx/tx", extract the max speed
-        $rateLimits = explode("/", $maxSpeed);
-        $rxLimit = (isset($rateLimits[0])) ? (int)$rateLimits[0] : 0;
-        $txLimit = (isset($rateLimits[1])) ? (int)$rateLimits[1] : 0;
-
+        // $rateLimits = explode("/", $maxSpeed);
+        // $rxLimit = (isset($rateLimits[5])) ? (int)$rateLimits[0] : 0;
+        // $txLimit = (isset($rateLimits[6])) ? (int)$rateLimits[1] : 0;
+        
         // Assuming you want the higher of the two values
         $maxSpeed = max($rxLimit, $txLimit);
+        
+        // echo json_encode(array("maxSpeed" => $maxSpeed));
     } else {
         echo json_encode(array("error" => "No profile details found."));
     }
@@ -124,19 +129,19 @@ if (!empty($profileData)) {
                     <div class="card-body">
                         <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
                         <p><strong>Paket:</strong> up to <?php echo htmlspecialchars($profileData); ?></p>
-                        <p><strong>Max Speed:</strong> <?php echo htmlspecialchars($rxLimit . ' Mbps / ' . $txLimit); ?> (Rx / Tx)</p>
+                        <p><strong>Max Speed:</strong> <?php echo htmlspecialchars($rxLimit . ' Mbps / ' . $txLimit. '/Mbps'); ?> (Rx / Tx)</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-8 mb-3 d-flex">
                 <div class="gauge-card">
-                    <h5>Upload Speed (Tx)</h5>
+                    <h5>Download Speed (Tx)</h5>
                     <canvas id="uploadGauge"></canvas>
                     <p id="uploadSpeedValue" class="gauge-value">0 Mbps</p>
                 </div>
                 <div class="gauge-card">
-                    <h5>Download Speed (Rx)</h5>
+                    <h5>Upload Speed (Rx)</h5>
                     <canvas id="downloadGauge"></canvas>
                     <p id="downloadSpeedValue" class="gauge-value">0 Mbps</p>
                 </div>

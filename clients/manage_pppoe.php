@@ -201,7 +201,7 @@ function getTrafficData($interface) {
                                         </button>
 
                                         <!-- WhatsApp Button -->
-                                        <a href="https://api.whatsapp.com/send?text=Check out the traffic details for user: http://localhost/winbox1/traffic_details.php?username=<?php echo urlencode($user['name']); ?>" 
+                                        <a href="https://api.whatsapp.com/send?text=Check out the traffic details for user: http://rondinet.net/rondinet/traffic_details.php?username=<?php echo urlencode($user['name']); ?>" 
                                         class="btn btn-success" target="_blank">
                                         Send to WhatsApp
                                         </a>
