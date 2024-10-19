@@ -1,7 +1,7 @@
 <?php
 // Include RouterOS API library (adjust the path based on your setup)
-require '../vendor/autoload.php'; // Or wherever your RouterOS API is located
-require '../config.php';          // Load the router configuration
+require 'vendor/autoload.php'; // Or wherever your RouterOS API is located
+require 'config.php';          // Load the router configuration
 
 use RouterOS\Client;
 use RouterOS\Query;
@@ -227,7 +227,7 @@ if (!empty($profileData)) {
         }
 
         // Fetch traffic data every 2 seconds
-        setInterval(fetchTrafficData, 2000);
+        setInterval(fetchTrafficData, 1000);
     </script>
 </body>
 </html>

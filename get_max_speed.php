@@ -1,6 +1,6 @@
 <?php
-require '../vendor/autoload.php'; // Load RouterOS API via Composer
-require '../config.php';          // Load the router configuration
+require 'vendor/autoload.php'; // Load RouterOS API via Composer
+require 'config.php';          // Load the router configuration
 
 use RouterOS\Client;
 use RouterOS\Query;
